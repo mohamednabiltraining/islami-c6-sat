@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:islami_c6_sat/home/hadeth/hadeth_name_widget.dart';
 
 class HadethTab extends StatefulWidget {
   @override
@@ -17,12 +18,19 @@ class _HadethTabState extends State<HadethTab> {
         Expanded(
           child: hadethList.isEmpty
               ? Center(child: CircularProgressIndicator())
-              : ListView.builder(
+              : ListView.separated(
                   itemBuilder: (_, index) {
-                    return Text(hadethList[index].title);
+                    return HadethTitleWidget(hadethList[index]);
                   },
                   itemCount: hadethList.length,
-                ),
+                  separatorBuilder: (_, index) {
+                    return Container(
+                      color: Theme.of(context).primaryColor,
+                      width: double.infinity,
+                      height: 2,
+                      margin: EdgeInsets.symmetric(horizontal: 48),
+                    );
+                  }),
         )
       ],
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:islami_c6_sat/home/quran/sura_title.dart';
-import 'package:islami_c6_sat/my_theme.dart';
 
 class QuranTab extends StatelessWidget {
   var names = [
@@ -135,8 +134,8 @@ class QuranTab extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
               border: Border.symmetric(
-                  horizontal:
-                      BorderSide(color: MyTheme.primaryColor, width: 2))),
+                  horizontal: BorderSide(
+                      color: Theme.of(context).primaryColor, width: 2))),
           child: Text(
             'Name',
             textAlign: TextAlign.center,
@@ -151,7 +150,7 @@ class QuranTab extends StatelessWidget {
           itemCount: names.length,
           separatorBuilder: (_, index) {
             return Container(
-              color: MyTheme.primaryColor,
+              color: Theme.of(context).primaryColor,
               width: double.infinity,
               height: 2,
               margin: EdgeInsets.symmetric(horizontal: 48),
