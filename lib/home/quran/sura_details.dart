@@ -10,12 +10,11 @@ class SuraDetailsScreen extends StatefulWidget {
 }
 
 class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
-  List<String> verses = [];
 
   @override
   Widget build(BuildContext context) {
-    var args = ModalRoute.of(context)?.settings.arguments as SuraDetailsArgs;
-    if (verses.isEmpty) readFile('${args.index + 1}.txt');
+    SuraDetailsArgs args =
+        ModalRoute.of(context)?.settings.arguments as SuraDetailsArgs;
     return Container(
       decoration: BoxDecoration(
           image: DecorationImage(
@@ -23,21 +22,32 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
         image: AssetImage('assets/images/light_background.png'),
       )),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(args.title),
-        ),
-        body: verses.isEmpty
-            ? Center(child: CircularProgressIndicator())
-            : Container(
+          appBar: AppBar(
+            title: Text(args.title),
+          ),
+          body: FutureBuilder<List<String>>(
+            future: readFile('${args.index + 1}.txt'),
+            builder: (buildContext, snapshot) {
+              if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              var verses = snapshot.data;
+              return Container(
                 margin: EdgeInsets.symmetric(horizontal: 12, vertical: 48),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(24)),
                 child: ListView.separated(
                   itemBuilder: (_, index) {
-                    return VerseWidget(index, verses[index]);
+                    return VerseWidget(index, verses![index]);
                   },
-                  itemCount: verses.length,
+                  itemCount: verses?.length ?? 0,
                   separatorBuilder: (_, __) {
                     return Container(
                       height: 2,
@@ -47,17 +57,16 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
                     );
                   },
                 ),
-              ),
-      ),
+              );
+            },
+          )),
     );
   }
 
-  void readFile(String fileName) async {
+  Future<List<String>> readFile(String fileName) async {
     String content = await rootBundle.loadString('assets/files/$fileName');
     List<String> lines = content.trim().split("\r\n");
-    print(verses);
-    verses = lines;
-    setState(() {});
+    return lines;
   }
 }
 
